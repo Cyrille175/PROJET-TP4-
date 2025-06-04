@@ -1,5 +1,6 @@
+from capteur_obstacle import obstacle
 from martypy import Marty
-my_marty = Marty("wifi","192.168.0.107")    #Adresse à adapter
+my_marty = Marty("wifi","192.168.0.100")    #Adresse à adapter
 
 def stand() :
     my_marty.stand_straight(move_time = 2000)
