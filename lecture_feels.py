@@ -1,15 +1,12 @@
-
 feels_data = []
 with open("real.feels", "r") as file:
     for line in file:
         color, emotion, led = line.strip().split(";")
         feels_data.append({
-            "color": color,
+            "color": color.lower(),
             "emotion": emotion,
             "led": led
         })
-
-
 
 def return_emotion(couleur_detectee, my_marty):
     couleur_detectee = couleur_detectee.lower()
@@ -17,6 +14,5 @@ def return_emotion(couleur_detectee, my_marty):
         if item["color"] == couleur_detectee:
             return item["emotion"]
 
-    else:
-        print("La couleur n'existe pas dans le fichier reals.feels ")
-        return "normal"
+    print("La couleur n'existe pas dans le fichier real.feels")
+    return "normal"
