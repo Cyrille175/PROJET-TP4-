@@ -1,44 +1,74 @@
 from martypy import Marty
-
 from lecture_feels import return_emotion
-
-my_marty = Marty("wifi", "192.168.0.103")
-left_color = my_marty.get_ground_sensor_reading("left")
-right_color = my_marty.get_ground_sensor_reading("right")
+import time
 
 
-my_marty.get_ready()
+def calibrate_colors(marty, foot):
+    color_reference = {}
 
-calibration_couleurs = {
-    "purple": (35,40),
-    "green": (40,43),
-    "blue": (45,50),
-    "red":(100,115),
-    "yellow": (120,140)
-}
+    print("=== MODE CALIBRAGE ===")
+    print("Pose une couleur sous le pied de Marty.")
+    print("Tape un nom de couleur (ex: 'rouge'), ou 'f' pour terminer le calibrage.")
 
+    while True:
+        color_name = input("Nom de la couleur (ou 'f' pour finir) : ").strip().lower()
+        if color_name == "f":
+            break
 
-def detecter_couleur():
-    for couleur, (min_val, max_val) in calibration_couleurs.items():
-        if min_val <= left_color <= max_val:
-            return couleur
-    return "blue"
+        input(f"Place la couleur '{color_name}' sous le pied et appuie sur Entrée...")
 
-print(left_color)
-color = detecter_couleur()
-print(color)
-emotion = return_emotion(color, my_marty)
-print(emotion)
+        if not marty.foot_on_ground(foot):
+            print("Le pied n'est pas posé. Recommence.")
+            continue  #me permet de ne pas executer le reste de la boucle
 
+        color_values = marty.get_color_sensor_hex(foot)
+        rh, gh, bh = color_values[1], color_values[2], color_values[3]
+        r = int(rh,16)
+        g = int(gh,16)
+        b = int(bh,16)
+        print(f"Couleur '{color_name}' enregistrée : R={r}, G={g}, B={b}")
+        color_reference[color_name] = (r, g, b)
 
-my_marty.eyes(emotion, 1000,  None)
+    return color_reference
 
+def identify_color(marty, color_reference, foot, tolerance):
+    color_values = marty.get_color_sensor_hex(foot)
+    rh, gh, bh = color_values[1], color_values[2], color_values[3]
+    r = int(rh,16)
+    g = int(gh,16)
+    b = int(bh,16)
+    for color, ref_rgb in color_reference.items():
+        if (abs(r - ref_rgb[0]) <= tolerance and
+            abs(g - ref_rgb[1]) <= tolerance and
+            abs(b - ref_rgb[2]) <= tolerance):
+                return color
+                break
 
+    return None
 
+if __name__ == "__main__":
+    my_marty = Marty("wifi", "192.168.0.107")
+    my_marty.stand_straight(move_time =2000)
+    couleurs = calibrate_colors(my_marty, "left")
+    if not couleurs:
+        print("Aucune couleur calibrée. Fin du programme.")
+    else:
+        print("\n=== MODE IDENTIFICATION EN BOUCLE ===")
+        print("Place une couleur sous le pied. Appuie sur Ctrl+C pour arrêter.")
+        try:
+            while True:
+                input(f"Appuies pour detecter une couleur")
+                couleur = identify_color(my_marty, couleurs, "left", 1)
+                if couleur:
+                    print(f" Couleur détectée : {couleur}")
+                    emotion = return_emotion(couleur, my_marty)
+                    print(f" Émotion associée : {emotion}")
+                    # Je peux ici ajouter des actions (LED, mouvement, etc.)
+                else:
+                    print(" Aucune couleur reconnue.")
+                my_marty.walk(7, 'auto', 0, 25, 1500, None)
+                my_marty.stand_straight(move_time=2000)
 
+        except KeyboardInterrupt:
+            print("\nFin du programme.")
 
-# Pour le violet je recupere sur le coté gauche 37-38-39 et sur le coté droit 182-184
-# Pour le vert je recupere sur le coté gauche 42 et sur le coté droit 174
-# Pour le bleu je recupere sur le coté gauche 46 et sur le coté droit 183
-# Pour le rouge je recupere sur le coté gauche 115 et sur le coté droit 185
-# Pour le jaune je recupere sur le coté gauche 140 et sur le coté droit 188
