@@ -11,10 +11,10 @@ def backward() :
     my_marty.walk(num_steps = 1, start_foot = 'auto', turn = 0, step_length = -20, move_time = 1500)
 
 def right() :
-    my_marty.sidestep(side = right, steps = 1, step_length = 20, move_time = 1500)
+    my_marty.sidestep(side = 'right', steps = 1, step_length = 20, move_time = 1500)
 
 def left() :
-    my_marty.sidestep(side = left, steps = 1, step_length = 20, move_time = 1500)
+    my_marty.sidestep(side = 'left', steps = 1, step_length = 20, move_time = 1500)
 
 #Permet de tester les déplacements
 #forward()
