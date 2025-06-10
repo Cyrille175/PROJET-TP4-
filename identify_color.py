@@ -1,4 +1,6 @@
 from martypy import Marty
+
+from emotionaction import applyEmotion
 from lecture_feels import return_emotion
 import time
 
@@ -20,7 +22,7 @@ def calibrate_colors(marty, foot):
         if not marty.foot_on_ground(foot):
             print("Le pied n'est pas posé. Recommence.")
             continue  #me permet de ne pas executer le reste de la boucle
-
+        marty.stand_straight(move_time=2000)
         color_values = marty.get_color_sensor_hex(foot)
         rh, gh, bh = color_values[1], color_values[2], color_values[3]
         r = int(rh,16)
@@ -42,33 +44,29 @@ def identify_color(marty, color_reference, foot, tolerance):
             abs(g - ref_rgb[1]) <= tolerance and
             abs(b - ref_rgb[2]) <= tolerance):
                 return color
-                break
+
 
     return None
 
-if __name__ == "__main__":
-    my_marty = Marty("wifi", "192.168.0.107")
-    my_marty.stand_straight(move_time =2000)
-    couleurs = calibrate_colors(my_marty, "left")
+def reaction_emotion(couleurs):
+    my_marty = Marty("wifi", "192.168.0.101")
     if not couleurs:
         print("Aucune couleur calibrée. Fin du programme.")
     else:
         print("\n=== MODE IDENTIFICATION EN BOUCLE ===")
-        print("Place une couleur sous le pied. Appuie sur Ctrl+C pour arrêter.")
+        my_marty.stand_straight(move_time=2000)
         try:
             while True:
-                input(f"Appuies pour detecter une couleur")
                 couleur = identify_color(my_marty, couleurs, "left", 1)
                 if couleur:
                     print(f" Couleur détectée : {couleur}")
                     emotion = return_emotion(couleur, my_marty)
                     print(f" Émotion associée : {emotion}")
                     # Je peux ici ajouter des actions (LED, mouvement, etc.)
+                    applyEmotion(emotion)
+                    break
                 else:
                     print(" Aucune couleur reconnue.")
-                my_marty.walk(7, 'auto', 0, 25, 1500, None)
-                my_marty.stand_straight(move_time=2000)
-
         except KeyboardInterrupt:
-            print("\nFin du programme.")
+            print("Erreur avec la bibliotheque time")
 
