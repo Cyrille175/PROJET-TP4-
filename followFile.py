@@ -19,36 +19,28 @@ print(positions) # test
 
 # follow mouvement algorithme:
 
-# Exemple de fonctions de mouvement (à adapter à ton robot réel)
-
-
-
-# Exemple de positions extraites du fichier (x, y)
-positions = [
-    {"x": 2, "y": 2},
-    {"x": 2, "y": 3},
-    {"x": 2, "y": 4},
-    {"x": 3, "y": 4},
-    {"x": 4, "y": 4}
-]
-
 # Parcours de chaque paire de positions successives
 for i in range(len(positions) - 1):
     pos_actuelle = positions[i]
     pos_suivante = positions[i + 1]
 
+    # Deplacement en x
     dx = pos_suivante["x"] - pos_actuelle["x"]
+    if dx > 0:
+        for _ in range(dx):
+            deplacementD.right_case()
+    elif dx < 0:
+        for _ in range(-dx):
+            deplacementD.left_case()
+
+    # Deplacement en y
     dy = pos_suivante["y"] - pos_actuelle["y"]
-
-    # Bouger en x
-    if dx == 1:
-        deplacementD.right_case()
-    elif dx == -1:
-        deplacementD.left_case()
-
-    # Bouger en y
-    if dy == 1:
-        deplacementD.forward_case()
-    elif dy == -1:
-        deplacementD.backward_case()
-
+    if dy > 0:
+        for _ in range(dy):
+            deplacementD.forward_case()
+    elif dy < 0:
+        for _ in range(-dy):
+            deplacementD.backward_case()
+            
+            
+# je dit que c'est plus precie que alterner les mouvemeent x et y !!!!!!
