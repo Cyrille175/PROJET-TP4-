@@ -1,5 +1,5 @@
 from martypy import Marty
-my_marty = Marty("wifi","192.168.0.100")    #Adresse à adapter
+my_marty = Marty("wifi","192.168.0.116")    #Adresse à adapter
 
 #Capteur obstacle
 obstacle_left = my_marty.foot_obstacle_sensed('left')
