@@ -1,4 +1,4 @@
-from deplacements import left_case, forward_case, right_case, backward_case
+from deplacement import left_case, forward_case, right_case, backward_case
 from martypy import Marty
 
 from identify_color import calibrate_colors, reaction_emotion
