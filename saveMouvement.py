@@ -32,15 +32,15 @@ def save_movement(direction):
         last_move = direction
         move_count = 1
 
-def flush_movement(): # quant? optionel (on flush quand on veux(on appel a l'interierur de stand))
+def flush_movement():
     """
-    a appeler a  la fin (fermeture, bouton stop...) pour enregistrer le dernier mouvement
+    supprime tout le contenu du fichier mouvement_path.txt
     """
     global last_move, move_count
 
-    if last_move is not None and move_count > 0:
-        code = direction_codes[last_move]
-        with open("mouvement_path.txt", "a", encoding="utf-8") as f:
-            f.write(f"{move_count}{code}\n")
+    #vide le fichier
+    open("mouvement_path.txt", "w", encoding="utf-8").close()
+
+    #reinitialisation des variables internes
     last_move = None
     move_count = 0
