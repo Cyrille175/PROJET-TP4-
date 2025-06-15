@@ -1,7 +1,7 @@
 #from capteur_obstacle import obstacle
 from tkinter import *
 from martypy import Marty
-my_marty = Marty("wifi","192.168.0.101")    #Adresse à adapter
+from connection import my_marty
 
 def stand() :
     my_marty.stand_straight(move_time = 2000)
@@ -27,10 +27,10 @@ def backward_case() :
     my_marty.walk(num_steps = 8, start_foot = 'auto', turn = 0, step_length = -20, move_time = 1500)
 
 def right_case() :
-    my_marty.sidestep(side = 'right', steps = 9, step_length = 20, move_time = 1500)
+    my_marty.sidestep(side = 'right', steps = 11, step_length = 20, move_time = 1500)
 
 def left_case() :
-    my_marty.sidestep(side = 'left', steps = 9, step_length = 20, move_time = 1500)
+    my_marty.sidestep(side = 'left', steps = 11, step_length = 20, move_time = 1500)
 
 fen = Tk()
 

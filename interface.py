@@ -1,17 +1,22 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit
 from PyQt6.QtCore import QSize
 import sys
 from deplacement import forward, backward, right, left, stand, forward_case, backward_case, right_case, left_case
 from saveMouvement import save_movement, flush_movement
+from identify_color import calibrate_colors
 from martypy import Marty
-my_marty = Marty("wifi","192.168.0.101")    #Adresse à adapter
+#my_marty = Marty("wifi","192.168.0.108")    #Adresse à adapter
+from connection import my_marty
+
 
 class Window(QWidget) :
     def __init__(self) :
+        print('Connecté')
+        flush_movement()    #Initialisation du fichier movement.path
+
         super().__init__()
         self.setWindowTitle("Panneau de contrôle de Marty")
         self.setContentsMargins(20, 20, 20, 20)
-
         desc1 = QLabel(self)
         desc1.setText('Déplacements en pas')
         desc1.move(60, 30)
@@ -55,7 +60,23 @@ class Window(QWidget) :
         l1 = QPushButton('←', self)
         l1.setFixedSize(QSize(80, 50))
         l1.move(500, 100)
-        l1.clicked.connect(self.appui_l1)       
+        l1.clicked.connect(self.appui_l1)
+
+        calibrage = QPushButton('Calibrage couleur', self)
+        calibrage.setFixedSize(QSize(150, 50))
+        calibrage.move(0, 250)
+        calibrage.clicked.connect(self.appui_calibrage)
+        self.inputCalibrage = QLineEdit(self)
+        self.inputCalibrage.setFixedSize(QSize(150, 50))
+        self.inputCalibrage.move(0,300)
+        self.inputCalibrage.returnPressed.connect(self.appui_valider)
+
+    def appui_valider(self) :
+        print(self.inputCalibrage.text())
+
+    def appui_calibrage(self) :
+        color_reference = calibrate_colors(my_marty, 'left')
+        return color_reference
 
     def appui_fw(self) :
         forward()
@@ -70,24 +91,24 @@ class Window(QWidget) :
         left()
 
     def appui_std(self) :
-        stand()
         flush_movement()
+        stand()
 
     def appui_fw1(self) :
-        forward_case()
         save_movement('forward_case')
-    
+        forward_case()
+            
     def appui_bw1(self) :
+        save_movement('backward_case')
         backward_case()
-        save_movement("backward_case")
-
+        
     def appui_r1(self) :
-        right_case()
         save_movement("right_case")
-
+        right_case()
+        
     def appui_l1(self) :
-        left_case()
         save_movement("left_case")
+        left_case()
 
 app = QApplication([])
 window = Window()

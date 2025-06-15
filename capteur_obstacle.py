@@ -1,5 +1,5 @@
 from martypy import Marty
-my_marty = Marty("wifi","192.168.0.116")    #Adresse à adapter
+from connection import my_marty
 
 #Capteur obstacle
 obstacle_left = my_marty.foot_obstacle_sensed('left')
@@ -14,6 +14,6 @@ if (obstacle_right) :
 def obstacle() :
     if (obstacle_right or obstacle_left) :
         print("Mouvement impossible : obstacle détécté")
-        return False
-    else :
         return True
+    else :
+        return False
